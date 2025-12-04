@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Townies Calculator – Accurate & Verified</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a2e;
+      background-image: url('background.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #f0f0f0;
+      padding: 20px;
+      line-height: 1.6;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Wallet Address Styling */
+    .donate-address {
+      background: rgba(44, 62, 80, 0.9);
+      color: #f39c12;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95em;
+      margin: 15px auto;
+      max-width: 500px;
+      word-break: break-all;
+      border: 2px solid #f39c12;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      text-align: center;
+      user-select: all;
+      -webkit-user-select: all;
+      -moz-user-select: all;
+      -ms-user-select: all;
+    }
+    
+    .donate-address:hover {
+      background: rgba(52, 73, 94, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);
+    }
+    
+    .donate-address:active {
+      transform: translateY(0);
+    }
+    
+    .donate-address::after {
+      content: '📋 Click to copy';
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c3e50;
+      color: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.8em;
+      opacity: 0;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+    }
+    
+    .donate-address:hover::after {
+      opacity: 1;
+    }
+    
+    .donate-address.copied {
+      background: rgba(39, 174, 96, 0.9);
+      border-color: #27ae60;
+      color: white;
+    }
+    
+    .donate-address.copied::after {
+      content: '✓ Copied!';
+      background: #27ae60;
+    }
+    
+    /* USD Price Display */
+    .gold-price {
+      background: rgba(243, 156, 18, 0.2);
+      color: #f39c12;
+      padding: 8px 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid rgba(243, 156, 18, 0.4);
+    }
+    
+    .usd-value {
+      color: #27ae60;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+    
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    
+    .modal-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    /* Modal Content */
+    .modal-content {
+      background: linear-gradient(135deg, rgba(30, 30, 46, 0.95) 0%, rgba(26, 26, 38, 0.95) 100%);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: modalSlideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    .modal-icon {
+      font-size: 3.5em;
+      margin-bottom: 15px;
+      animation: bounce 2s infinite;
+      text-shadow: 0 0 20px rgba(29, 161, 242, 0.5);
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    .modal-title {
+      color: #ffffff;
+      font-size: 1.8em;
+      font-weight: 800;
+      margin-bottom: 8px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-subtitle {
+      color: #b0b0b0;
+      font-size: 1em;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    
+    /* Tweet Preview */
+    .tweet-preview {
+      background: rgba(240, 248, 255, 0.1);
+      border: 2px solid rgba(29, 161, 242, 0.5);
+      border-radius: 12px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: left;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .tweet-preview:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(29, 161, 242, 0.2);
+      border-color: rgba(29, 161, 242, 0.8);
+    }
+    
+    .tweet-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .tweet-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1da1f2, #0d8ddb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2em;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(29, 161, 242, 0.5);
+    }
+    
+    .tweet-user {
+      flex: 1;
+    }
+    
+    .tweet-name {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 0.95em;
+    }
+    
+    .tweet-handle {
+      color: #8899a6;
+      font-size: 0.85em;
+    }
+    
+    .tweet-body {
+      color: #ffffff;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      font-size: 0.95em;
+    }
+    
+    .tweet-link {
+      color: #1da1f2;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .tweet-link:hover {
+      text-decoration: underline;
+    }
+    
+    .tweet-actions {
+      display: flex;
+      gap: 20px;
+      color: #8899a6;
+      font-size: 0.85em;
+    }
+    
+    /* Tasks List - MEDIUM SIZE */
+    .tasks-list {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: left;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+    }
+    
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    
+    .task-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(3px);
+      border-color: rgba(29, 161, 242, 0.3);
+    }
+    
+    .task-item.completed {
+      background: rgba(39, 174, 96, 0.2);
+      border-color: rgba(39, 174, 96, 0.5);
+    }
+    
+    .task-checkbox {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      cursor: pointer;
+      accent-color: #28a745;
+    }
+    
+    .task-label {
+      flex: 1;
+      font-weight: 600;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+    }
+    
+    .task-icon {
+      font-size: 1em;
+    }
+    
+    /* Buttons */
+    .verify-button {
+      background: linear-gradient(135deg, #1da1f2 0%, #0d8ddb 100%);
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 1em;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 6px 15px rgba(29, 161, 242, 0.3);
+      margin-top: 15px;
+    }
+    
+    .verify-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(29, 161, 242, 0.4);
+    }
+    
+    .verify-button:disabled {
+      background: #636e72;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .twitter-button {
+      background: linear-gradient(135deg, #1da1f2 0%, #0d8ddb 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    
+    .twitter-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(29, 161, 242, 0.3);
+    }
+    
+    .share-button {
+      background: linear-gradient(135deg, #1da1f2 0%, #0d8ddb 100%);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1em;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 25px auto 0;
+      width: 100%;
+      max-width: 280px;
+    }
+    
+    .share-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(29, 161, 242, 0.3);
+    }
+    
+    /* Skip for now */
+    .skip-link {
+      display: block;
+      margin-top: 15px;
+      color: #95a5a6;
+      text-decoration: none;
+      font-size: 0.85em;
+      transition: color 0.3s ease;
+    }
+    
+    .skip-link:hover {
+      color: #b0b0b0;
+      text-decoration: underline;
+    }
+    
+    /* Counter */
+    .counter {
+      display: inline-block;
+      background: #e74c3c;
+      color: white;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.8em;
+      margin-left: 8px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    /* Reward Badge */
+    .reward-badge {
+      background: linear-gradient(135deg, rgba(243, 156, 18, 0.8) 0%, rgba(230, 126, 34, 0.8) 100%);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+      font-weight: 700;
+      font-size: 0.9em;
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+      backdrop-filter: blur(5px);
+    }
+    
+    /* Overlay for readability */
+    .content-overlay {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .content-overlay::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(26, 26, 46, 0.85);
+      z-index: -1;
+      border-radius: inherit;
+    }
+    
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      position: relative;
+      transition: filter 0.5s ease;
+    }
+    
+    .container.blurred {
+      filter: blur(10px);
+      pointer-events: none;
+    }
+    
+    h1 { 
+      text-align: center; 
+      margin: 20px 0; 
+      font-size: 2.8em; 
+      color: #ffffff;
+      font-weight: 800;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .subtitle { 
+      text-align: center; 
+      margin-bottom: 30px; 
+      color: #b0b0b0; 
+      font-size: 1.1em;
+      font-weight: 500;
+    }
+    
+    /* Cards */
+    .card {
+      background: rgba(30, 30, 46, 0.9);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #3498db, #2ecc71, #f39c12);
+      border-radius: 16px 16px 0 0;
+    }
+    
+    .card h2 {
+      color: #ffffff;
+      margin-bottom: 20px;
+      font-size: 1.6em;
+      font-weight: 700;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Notes Section */
+    .notes-list {
+      margin-top: 20px;
+    }
+    
+    .note-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      border-left: 4px solid #3498db;
+    }
+    
+    .note-icon {
+      font-size: 1.5em;
+      margin-right: 15px;
+      margin-top: 3px;
+    }
+    
+    .note-content {
+      flex: 1;
+    }
+    
+    .note-title {
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 5px;
+      font-size: 1.1em;
+    }
+    
+    .note-text {
+      color: #b0b0b0;
+      line-height: 1.6;
+      font-size: 0.95em;
+    }
+    
+    .note-item.warning {
+      border-left-color: #f39c12;
+      background: rgba(243, 156, 18, 0.1);
+    }
+    
+    .note-item.success {
+      border-left-color: #27ae60;
+      background: rgba(39, 174, 96, 0.1);
+    }
+    
+    .note-item.info {
+      border-left-color: #3498db;
+      background: rgba(52, 152, 219, 0.1);
+    }
+    
+    /* Footer Section - Stylish Underline */
+    .footer-section {
+      margin-top: 40px;
+      padding: 25px;
+      background: rgba(30, 30, 46, 0.9);
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      text-align: center;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .footer-title {
+      font-size: 1.4em;
+      color: #ffffff;
+      font-weight: 800;
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 10px;
+    }
+    
+    .footer-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, #f39c12, #ffffff, #f39c12);
+      border-radius: 3px;
+    }
+    
+    .footer-content {
+      color: #b0b0b0;
+      line-height: 1.8;
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
+    
+    .footer-link {
+      color: #1da1f2;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      border-bottom: 2px dotted #1da1f2;
+      padding-bottom: 2px;
+    }
+    
+    .footer-link:hover {
+      color: #0d8ddb;
+      border-bottom: 2px solid #0d8ddb;
+    }
+    
+    .coming-soon {
+      color: #f39c12;
+      font-weight: 700;
+      font-size: 1.1em;
+      margin-top: 15px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Input Section */
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    label { 
+      font-weight: 600; 
+      min-width: 180px;
+      color: #ffffff;
+    }
+    
+    /* Game-style Inputs */
+    input[type=number] {
+      width: 120px;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    input[type=number]:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Checkbox */
+    input[type=checkbox] {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    
+    /* Building Table */
+    .building-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .building-table th {
+      background: rgba(52, 73, 94, 0.9);
+      color: white;
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .building-table td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .building-table tr:last-child td {
+      border-bottom: none;
+    }
+    .building-table input[type="number"] {
+      width: 80px;
+      padding: 8px 10px;
+    }
+    
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+      background: rgba(30, 30, 46, 0.9);
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .nav-tab {
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #b0b0b0;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 180px;
+      justify-content: center;
+    }
+    .nav-tab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .nav-tab.active {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      border-color: #3498db;
+      color: white;
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+    }
+    
+    /* Comparison Table */
+    .comparison-table {
+      background: rgba(30, 30, 46, 0.9);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .comp-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      padding: 18px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .comp-table td {
+      padding: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-weight: 500;
+    }
+    .comp-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    /* Resource Colors */
+    .resource-cell { color: #ffffff; font-weight: 600; }
+    .positive { color: #27ae60; font-weight: 700; }
+    .negative { color: #e74c3c; font-weight: 700; }
+    .gold { color: #f39c12; font-weight: 700; }
+    .usd { color: #27ae60; font-weight: 700; }
+    
+    /* Town Score Section */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 25px;
+    }
+    .score-card {
+      background: linear-gradient(135deg, rgba(40, 40, 60, 0.8) 0%, rgba(30, 30, 46, 0.9) 100%);
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+    .score-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    .score-label {
+      font-size: 1em;
+      color: #b0b0b0;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .score-value {
+      font-size: 2.8em;
+      font-weight: 800;
+      margin: 10px 0;
+      line-height: 1;
+    }
+    .score-subtitle {
+      font-size: 0.9em;
+      color: #95a5a6;
+    }
+    .usd-equivalent {
+      font-size: 0.85em;
+      color: #27ae60;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+    
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .stat-item {
+      text-align: center;
+      flex: 1;
+      min-width: 150px;
+    }
+    .stat-value {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 5px;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      color: #b0b0b0;
+    }
+    
+    /* Alerts */
+    .alert {
+      background: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 20px 0;
+      font-weight: 600;
+      border-left: 5px solid #ffc107;
+    }
+    .alert.success {
+      background: rgba(39, 174, 96, 0.1);
+      color: #27ae60;
+      border-left-color: #27ae60;
+    }
+    .alert.warning {
+      background: rgba(243, 156, 18, 0.1);
+      color: #f39c12;
+      border-left-color: #f39c12;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .modal-content {
+        padding: 20px;
+        margin: 10px;
+      }
+      
+      .modal-title {
+        font-size: 1.6em;
+      }
+      
+      .task-label {
+        font-size: 0.85em;
+      }
+      
+      .verify-button {
+        padding: 12px 20px;
+        font-size: 0.95em;
+      }
+      
+      .footer-section {
+        padding: 20px 15px;
+      }
+      
+      .donate-address {
+        font-size: 0.85em;
+        padding: 10px 15px;
+      }
+      
+      .donate-address::after {
+        display: none;
+      }
+      
+      .donate-address:hover::after {
+        display: none;
+      }
+      
+      .input-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      label { min-width: auto; }
+      input[type=number] { width: 100%; }
+      .nav-tabs {
+        flex-direction: column;
+      }
+      .nav-tab {
+        width: 100%;
+        min-width: auto;
+      }
+      .score-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-bar {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .stat-item {
+        min-width: 100%;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .donate-address {
+        font-size: 0.75em;
+        padding: 8px 10px;
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Modal Popup -->
+  <div class="modal-overlay" id="taskModal">
+    <div class="modal-content">
+      <div class="modal-icon">🔓</div>
+      <h1 class="modal-title">Unlock Calculator Access</h1>
+      <p class="modal-subtitle">Complete these 3 tasks to access the premium Townies Calculator</p>
+      
+      <!-- Current GOLD Price Display -->
+      <div class="gold-price" id="modalGoldPrice">
+        Current $GOLD Price: Loading...
+      </div>
+      
+      <!-- Tweet Preview -->
+      <div class="tweet-preview" id="tweetPreview">
+        <div class="tweet-header">
+          <div class="tweet-avatar">S</div>
+          <div class="tweet-user">
+            <div class="tweet-name">Sultan</div>
+            <div class="tweet-handle">@Degensultan</div>
+          </div>
+        </div>
+        <div class="tweet-body">
+          Just optimized my town with the @Townies_  
+          Calculator! Join the game now: app.townies.games?  
+          ref=6beba580bc
+          <br><br>
+          #TowniesGame #Web3Gaming #CryptoGaming
+        </div>
+        <div class="tweet-actions">
+          <span>❤️ 1.2K</span>
+          <span>🔁 876</span>
+          <span>💬 245</span>
+        </div>
+      </div>
+      
+      <div class="tasks-list">
+        <!-- Task 1: Follow Profile -->
+        <div class="task-item" id="task1">
+          <input type="checkbox" class="task-checkbox" id="check1">
+          <label for="check1" class="task-label">
+            <span class="task-icon">🐦</span>
+            <a href="https://x.com/Degensultan" target="_blank" style="color: inherit; text-decoration: none;">
+              Follow @Degensultan on Twitter/X
+            </a>
+            <span class="counter">Required</span>
+          </label>
+        </div>
+        
+        <!-- Task 2: Like Tweet -->
+        <div class="task-item" id="task2">
+          <input type="checkbox" class="task-checkbox" id="check2">
+          <label for="check2" class="task-label">
+            <span class="task-icon">❤️</span>
+            <a href="https://x.com/Degensultan/status/1995267157551362084" target="_blank" style="color: inherit; text-decoration: none;">
+              Like the pinned tweet above
+            </a>
+            <span class="counter">Required</span>
+          </label>
+        </div>
+        
+        <!-- Task 3: Retweet -->
+        <div class="task-item" id="task3">
+          <input type="checkbox" class="task-checkbox" id="check3">
+          <label for="check3" class="task-label">
+            <span class="task-icon">🔁</span>
+            <a href="https://x.com/intent/retweet?tweet_id=1995267157551362084" target="_blank" style="color: inherit; text-decoration: none;">
+              Retweet the pinned tweet
+            </a>
+            <span class="counter">Required</span>
+          </label>
+        </div>
+        
+        <!-- Task 4: Reply to Tweet -->
+        <div class="task-item" id="task4">
+          <input type="checkbox" class="task-checkbox" id="check4">
+          <label for="check4" class="task-label">
+            <span class="task-icon">💬</span>
+            <a href="https://x.com/intent/tweet?in_reply_to=1995267157551362084" target="_blank" style="color: inherit; text-decoration: none;">
+              Reply with your best town setup
+            </a>
+            <span class="counter">Optional</span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="reward-badge">
+        <span>🏆</span>
+        Complete all tasks for full calculator access!
+      </div>
+      
+      <button class="verify-button" id="verifyButton" disabled>
+        🔓 Verify & Unlock Calculator
+      </button>
+      
+      <a href="#" class="skip-link" id="skipLink">Skip for now (limited access)</a>
+    </div>
+  </div>
+
+  <!-- Main Content (Initially blurred) -->
+  <div class="container blurred" id="mainContent">
+    <h1>🏰 Townies Calculator</h1>
+    <p class="subtitle">Accurate calculations based on official game mechanics</p>
+    
+    <!-- Current GOLD Price Display -->
+    <div class="gold-price" id="liveGoldPrice">
+      Current $GOLD Price: Loading... | Daily Profit in USD: --
+    </div>
+    
+    <div class="card">
+      <h2>Your Town Calculator</h2>
+      
+      <div class="input-row">
+        <label for="tiles">🏞️ Tiles Unlocked (3-30)</label>
+        <input type="number" id="tiles" min="3" max="30" value="0" />
+        <span style="color: #b0b0b0;">
+          Wood range: <strong>137 - 384/hour</strong> • Max Storage: <strong id="max-wood">3,700</strong>
+        </span>
+      </div>
+      
+      <table class="building-table">
+        <thead>
+          <tr>
+            <th>Building</th>
+            <th>Level 1</th>
+            <th>Level 2</th>
+            <th>Level 3</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🏠 Houses (Stone)</td>
+            <td><input type="number" id="h1" min="0" value="0" /></td>
+            <td><input type="number" id="h2" min="0" value="0" /></td>
+            <td><input type="number" id="h3" min="0" value="0" /></td>
+            <td id="total-houses">9</td>
+          </tr>
+          <tr>
+            <td>🛠️ Forges (Iron)</td>
+            <td><input type="number" id="f1" min="0" value="0" /></td>
+            <td><input type="number" id="f2" min="0" value="0" /></td>
+            <td><input type="number" id="f3" min="0" value="0" /></td>
+            <td id="total-forges">5</td>
+          </tr>
+          <tr>
+            <td>⛪ Churches (cGOLD)</td>
+            <td><input type="number" id="c1" min="0" value="0" /></td>
+            <td><input type="number" id="c2" min="0" value="0" /></td>
+            <td><input type="number" id="c3" min="0" value="0" /></td>
+            <td id="total-churches">8</td>
+          </tr>
+          <!-- New Castle Row -->
+          <tr>
+            <td>🏰 Castles (Converts cGOLD to $GOLD)</td>
+            <td><input type="number" id="castle1" min="0" value="0" /></td>
+            <td><input type="number" id="castle2" min="0" value="0" /></td>
+            <td><input type="number" id="castle3" min="0" value="0" /></td>
+            <td id="total-castles">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('hourly')">
+        <span>⏰</span> Hourly View
+      </button>
+      <button class="nav-tab" onclick="showTab('daily')">
+        <span>📅</span> Daily View
+      </button>
+      <button class="nav-tab" onclick="showTab('score')">
+        <span>🏆</span> Town Score
+      </button>
+      <button class="nav-tab" onclick="showTab('notes')">
+        <span>📝</span> Notes
+      </button>
+    </div>
+
+    <!-- Hourly View -->
+    <div id="hourly-view">
+      <div class="comparison-table">
+        <h3>⏰ Hourly Resource Flow (Per Hour)</h3>
+        <table class="comp-table" id="hourly-comparison">
+          <!-- Filled by JavaScript -->
+        </table>
+      </div>
+    </div>
+
+    <!-- Daily View (Hidden) -->
+    <div id="daily-view" style="display: none;">
+      <div class="comparison-table">
+        <h3>📅 Daily Resource Flow (24 Hours)</h3>
+        <table class="comp-table" id="daily-comparison">
+          <!-- Filled by JavaScript -->
+        </table>
+      </div>
+    </div>
+
+    <!-- Town Score View (Hidden) -->
+    <div id="score-view" style="display: none;">
+      <div class="card">
+        <h2>🏆 Your Town Score</h2>
+        <div id="alert" class="alert success">✅ Town is sustainable! Castle converting cGOLD to $GOLD</div>
+        
+        <div class="score-grid">
+          <div class="score-card">
+            <div class="score-label">
+              <span>🌲</span> Wood Balance
+            </div>
+            <div class="score-value negative" id="score-wood">-2,526</div>
+            <div class="score-subtitle">Per day after repairs</div>
+          </div>
+          
+          <div class="score-card">
+            <div class="score-label">
+              <span>🏠</span> Stone Balance
+            </div>
+            <div class="score-value negative" id="score-stone">-1,324</div>
+            <div class="score-subtitle">Per day after repairs</div>
+          </div>
+          
+          <div class="score-card">
+            <div class="score-label">
+              <span>🛠️</span> Iron Balance
+            </div>
+            <div class="score-value positive" id="score-iron">86</div>
+            <div class="score-subtitle">Per day after repairs</div>
+          </div>
+          
+          <div class="score-card">
+            <div class="score-label">
+              <span>💰</span> $GOLD Profit
+            </div>
+            <div class="score-value gold" id="score-gold">1,748</div>
+            <div class="usd-equivalent" id="gold-usd-equivalent">≈ $-- USD/day</div>
+            <div class="score-subtitle">Per day after castle conversion</div>
+          </div>
+        </div>
+        
+        <!-- Share Score Button -->
+        <button class="share-button" id="shareScoreBtn">
+          <span>🐦</span> Share Your Score on Twitter
+        </button>
+        
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-value" id="iron-multiplier">1.86x</div>
+            <div class="stat-label">Iron Multiplier</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value positive" id="castle-status">Active</div>
+            <div class="stat-label">Castle Status</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="total-buildings">22</div>
+            <div class="stat-label">Total Buildings</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="wood-per-hour">301.0</div>
+            <div class="stat-label">Wood/Hour</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes View (Hidden) -->
+    <div id="notes-view" style="display: none;">
+      <div class="card">
+        <h2>📝 Important Notes & Tips</h2>
+        
+        <div class="notes-list">
+          <div class="note-item warning">
+            <div class="note-icon">⚠️</div>
+            <div class="note-content">
+              <div class="note-title">Negative Values Explained</div>
+              <div class="note-text">
+                Negative daily values don't mean immediate failure! When you start a town, you accumulate resources before repairs become significant. The calculator shows <strong>hourly equilibrium</strong> - what happens after you've used up your initial stockpile. If your town is working fine despite negative values, you have accumulated resources acting as a buffer.
+              </div>
+            </div>
+          </div>
+          
+          <div class="note-item info">
+            <div class="note-icon">💰</div>
+            <div class="note-content">
+              <div class="note-title">$GOLD to USD Conversion</div>
+              <div class="note-text">
+                The calculator fetches live $GOLD prices from the Base network (Token: 0xD03f45E74E72E54A42992FC1533b2050AA939B8B). USD values update every 60 seconds. Actual conversion rates may vary based on market conditions.
+              </div>
+            </div>
+          </div>
+          
+          <div class="note-item info">
+            <div class="note-icon">🏰</div>
+            <div class="note-content">
+              <div class="note-title">Castle Conversion (1→0.7)</div>
+              <div class="note-text">
+                The castle converts cGOLD to $GOLD at a 70% rate (1 cGOLD = 0.7 $GOLD). Each castle can convert up to 2,600 cGOLD per day into 1,820 $GOLD. Multiple castles increase the conversion capacity proportionally.
+              </div>
+            </div>
+          </div>
+          
+          <div class="note-item">
+            <div class="note-icon">🛠️</div>
+            <div class="note-content">
+              <div class="note-title">Iron Multiplier System</div>
+              <div class="note-text">
+                Churches boost iron production multiplicatively: Level 1 churches give ×1.07, Level 2 give ×1.08, Level 3 give ×1.09 per church. The multipliers stack multiplicatively, not additively. Each additional church multiplies your total iron production.
+              </div>
+            </div>
+          </div>
+          
+          <div class="note-item">
+            <div class="note-icon">🌳</div>
+            <div class="note-content">
+              <div class="note-title">Wood Generation Formula</div>
+              <div class="note-text">
+                Wood generation is fixed: 0.038 wood/second base + 0.00228 per tile unlocked (after the first). Each tile unlock adds +6% of the base value as a flat bonus. This means more tiles = more wood, but with diminishing percentage gains.
+              </div>
+            </div>
+          </div>
+          
+          <div class="note-item success">
+            <div class="note-icon">✅</div>
+            <div class="note-content">
+              <div class="note-title">Building Requirements</div>
+              <div class="note-text">
+                • Minimum 2 Houses per Forge for sustainable repair costs<br>
+                • Castle repair costs scale with castle levels<br>
+                • Repair costs are hourly and scale with building levels
+              </div>
+            </div>
+          </div>
+          
+          <div class="note-item">
+            <div class="note-icon">📊</div>
+            <div class="note-content">
+              <div class="note-title">Daily vs Hourly View</div>
+              <div class="note-text">
+                <strong>Hourly View</strong>: Shows exact production/repair rates per hour. Useful for understanding the minute-by-minute flow.<br>
+                <strong>Daily View</strong>: Shows 24-hour totals. Better for planning long-term resource management and understanding daily profits.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer-section">
+      <h3 class="footer-title">Created by Sultan</h3>
+      <div class="footer-content">
+        <p>
+          This calculator was created by <strong>Sultan</strong>. 
+          Follow <a href="https://x.com/Degensultan" target="_blank" class="footer-link">@Degensultan on Twitter/X</a> 
+          for upcoming updates, tools, and gaming insights.
+        </p>
+        
+        <div class="donate-address" id="walletAddress">
+          Donate: 0x7aa8327ec570f39343ab744e198c7c497d496c46<br>
+          <span style="color: #f39c12; font-weight: bold;">$GOLD or $ETH for Support (Base Network)</span>
+        </div>
+        
+        <!-- Live GOLD Price Display -->
+        <div id="footerGoldPrice" style="margin-top: 15px; color: #f39c12; font-weight: bold; font-size: 1.1em;">
+          $GOLD Price: Loading...
+        </div>
+        
+        <p class="coming-soon">🚀 More tools and calculators coming soon!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let goldPriceUSD = 0;
+    let goldPriceLoaded = false;
+    
+    // Task Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const taskModal = document.getElementById('taskModal');
+      const mainContent = document.getElementById('mainContent');
+      const verifyButton = document.getElementById('verifyButton');
+      const skipLink = document.getElementById('skipLink');
+      const checkboxes = document.querySelectorAll('.task-checkbox');
+      const walletAddress = document.getElementById('walletAddress');
+      const walletText = '0x7aa8327ec570f39343ab744e198c7c497d496c46';
+      const tweetPreview = document.getElementById('tweetPreview');
+      
+      // Initialize GOLD price
+      fetchGoldPrice();
+      setInterval(fetchGoldPrice, 60000); // Update every 60 seconds
+      
+      // Wallet copy functionality
+      walletAddress.addEventListener('click', function() {
+        navigator.clipboard.writeText(walletText).then(() => {
+          const originalHTML = walletAddress.innerHTML;
+          walletAddress.classList.add('copied');
+          walletAddress.innerHTML = '✓ Address Copied to Clipboard!';
+          
+          setTimeout(() => {
+            walletAddress.classList.remove('copied');
+            walletAddress.innerHTML = originalHTML;
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = walletText;
+          document.body.appendChild(textArea);
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            const originalHTML = walletAddress.innerHTML;
+            walletAddress.classList.add('copied');
+            walletAddress.innerHTML = '✓ Address Copied to Clipboard!';
+            
+            setTimeout(() => {
+              walletAddress.classList.remove('copied');
+              walletAddress.innerHTML = originalHTML;
+            }, 2000);
+          } catch (err) {
+            console.error('Fallback copy failed: ', err);
+          }
+          document.body.removeChild(textArea);
+        });
+      });
+      
+      // Tweet preview click handler
+      tweetPreview.addEventListener('click', function() {
+        window.open('https://x.com/Degensultan/status/1995267157551362084', '_blank');
+      });
+      
+      // Check if user has already completed tasks
+      const tasksCompleted = localStorage.getItem('towniesTasksCompleted');
+      
+      if (tasksCompleted === 'true') {
+        // User already completed tasks, show calculator immediately
+        taskModal.classList.add('hidden');
+        mainContent.classList.remove('blurred');
+        initializeCalculator();
+      } else {
+        // Show modal and blur main content
+        taskModal.classList.remove('hidden');
+        mainContent.classList.add('blurred');
+      }
+      
+      // Update verify button state based on checkboxes (first 3 are required)
+      function updateVerifyButton() {
+        const requiredChecked = Array.from(checkboxes).slice(0, 3).every(checkbox => checkbox.checked);
+        verifyButton.disabled = !requiredChecked;
+        
+        // Add completed class to task items
+        checkboxes.forEach((checkbox, index) => {
+          const taskItem = document.getElementById(`task${index + 1}`);
+          if (checkbox.checked) {
+            taskItem.classList.add('completed');
+          } else {
+            taskItem.classList.remove('completed');
+          }
+        });
+        
+        // Add animation when all required are checked
+        if (requiredChecked) {
+          verifyButton.innerHTML = '🎉 Tasks Complete! Unlock Calculator';
+        }
+      }
+      
+      // Checkbox event listeners
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateVerifyButton);
+      });
+      
+      // Verify button click
+      verifyButton.addEventListener('click', function() {
+        if (!verifyButton.disabled) {
+          // Save completion status
+          localStorage.setItem('towniesTasksCompleted', 'true');
+          
+          // Hide modal with animation
+          taskModal.classList.add('hidden');
+          mainContent.classList.remove('blurred');
+          
+          // Initialize calculator
+          initializeCalculator();
+          
+          // Show success message
+          setTimeout(() => {
+            alert('🎉 Thank you for supporting Townies! Calculator unlocked.');
+          }, 300);
+        }
+      });
+      
+      // Skip link
+      skipLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (confirm("Skipping will give you limited access. Complete tasks later for full features. Continue?")) {
+          // Hide modal with animation
+          taskModal.classList.add('hidden');
+          mainContent.classList.remove('blurred');
+          
+          // Initialize calculator
+          initializeCalculator();
+          
+          // Show limited access message
+          setTimeout(() => {
+            alert('⚠️ Limited access granted. Complete tasks later for full features!');
+          }, 300);
+        }
+      });
+    });
+    
+    // Fetch GOLD price from API
+    async function fetchGoldPrice() {
+      try {
+        // Using multiple APIs for redundancy
+        const apiUrl = `https://api.dexscreener.com/latest/dex/tokens/0xD03f45E74E72E54A42992FC1533b2050AA939B8B`;
+        
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        
+        if (data.pairs && data.pairs.length > 0) {
+          // Get the first pair's price
+          goldPriceUSD = parseFloat(data.pairs[0].priceUsd);
+          goldPriceLoaded = true;
+          
+          // Update price displays
+          const goldPriceText = `$${goldPriceUSD.toFixed(4)} USD`;
+          document.getElementById('modalGoldPrice').textContent = `Current $GOLD Price: ${goldPriceText}`;
+          document.getElementById('liveGoldPrice').innerHTML = `Current $GOLD Price: <span class="usd-value">${goldPriceText}</span> | Daily Profit in USD: <span id="dailyUsdProfit">--</span>`;
+          document.getElementById('footerGoldPrice').textContent = `$GOLD Price: ${goldPriceText}`;
+          
+          // Update tweet preview with current price
+          updateTweetPreviewWithPrice();
+          
+          // Update calculator if it's already initialized
+          if (typeof window.updateCalculator === 'function') {
+            window.updateCalculator();
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching GOLD price:', error);
+        // Fallback to a default price or show error
+        document.getElementById('modalGoldPrice').textContent = 'Error loading $GOLD price';
+        document.getElementById('liveGoldPrice').textContent = 'Error loading $GOLD price. Using default calculations.';
+      }
+    }
+    
+    // Update tweet preview with current price
+    function updateTweetPreviewWithPrice() {
+      const tweetBody = document.querySelector('.tweet-body');
+      if (tweetBody && goldPriceLoaded) {
+        const originalText = tweetBody.textContent;
+        if (!originalText.includes('USD')) {
+          tweetBody.innerHTML = `Just optimized my town with the @Townies_ Calculator!<br><br>Current $GOLD price: $${goldPriceUSD.toFixed(4)} USD<br><br>Join the game now: app.townies.games?ref=6beba580bc<br><br>#TowniesGame #Web3Gaming #CryptoGaming`;
+        }
+      }
+    }
+    
+    // Initialize calculator (moved to separate function)
+    function initializeCalculator() {
+      // Game constants - VERIFIED
+      const PROD = {
+        house: [43, 49, 57],        // Stone per hour
+        forge: [12, 15, 18.75],    // Iron per hour
+        church: [14, 16, 18]       // cGOLD per hour
+      };
+
+      const MULT = [1.07, 1.08, 1.09]; // Iron multipliers per church level
+      
+      // Repair costs per hour - FROM OFFICIAL TABLES
+      const REPAIR_HOURLY = {
+        house: { w: 10, s: 0, i: 0, g: 0 },                    // 10 wood/hour
+        forge: { w: 13.67, s: 30, i: 0, g: 0 },               // 13.67 wood, 30 stone/hour
+        church: { w: 32.4, s: 39.5, i: 16.2, g: 3.6 },       // 32.4 wood, 39.5 stone, 16.2 iron, 3.6 gold/hour
+        castle: { w: 43.2, s: 90, i: 39.6, g: 2.9875 }       // 43.2 wood, 90 stone, 39.6 iron, 2.9875 gold/hour
+      };
+
+      // Global variable to store current calculations
+      let currentCalculations = {};
+
+      // Initialize
+      function initialize() {
+        const inputs = document.querySelectorAll('input[type="number"], input[type="checkbox"]');
+        inputs.forEach(input => {
+          input.addEventListener('input', update);
+          input.addEventListener('change', update);
+        });
+        
+        // Share score button
+        document.getElementById('shareScoreBtn').addEventListener('click', shareScoreOnTwitter);
+        
+        update(); // Initial calculation
+      }
+
+      // Share score on Twitter
+      function shareScoreOnTwitter() {
+        const wood = document.getElementById('score-wood').textContent;
+        const stone = document.getElementById('score-stone').textContent;
+        const iron = document.getElementById('score-iron').textContent;
+        const gold = document.getElementById('score-gold').textContent;
+        const castleStatus = document.getElementById('castle-status').textContent;
+        const usdEquivalent = document.getElementById('gold-usd-equivalent').textContent;
+        
+        let tweetText = `🏰 Just optimized my Townies setup with @Degensultan's calculator!%0A%0A📊 My Town Score:%0A🌲 Wood: ${wood}/day%0A🏠 Stone: ${stone}/day%0A🛠️ Iron: ${iron}/day%0A💰 $GOLD: ${gold}/day%0A${usdEquivalent.replace('≈ ', '')}%0A🏰 Castle: ${castleStatus}%0A%0A`;
+        
+        // Add GOLD price if available
+        if (goldPriceLoaded) {
+          tweetText += `Current $GOLD price: $${goldPriceUSD.toFixed(4)} USD%0A`;
+        }
+        
+        tweetText += `Join @Townies_ now: https://app.townies.games?ref=6beba580bc%0A%0A#TowniesGame #Web3Gaming #CryptoGaming`;
+        
+        window.open(`https://twitter.com/intent/tweet?text=${tweetText}`, '_blank');
+      }
+
+      // Tab navigation
+      function showTab(tab) {
+        // Hide all views
+        document.getElementById('hourly-view').style.display = 'none';
+        document.getElementById('daily-view').style.display = 'none';
+        document.getElementById('score-view').style.display = 'none';
+        document.getElementById('notes-view').style.display = 'none';
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+        
+        // Show selected view and activate its tab
+        document.getElementById(`${tab}-view`).style.display = 'block';
+        event.target.classList.add('active');
+      }
+
+      // Main calculation function
+      function update() {
+        const tiles = Math.min(30, Math.max(3, parseInt(document.getElementById('tiles').value) || 21));
+        
+        const h = [
+          parseFloat(document.getElementById('h1').value) || 0,
+          parseFloat(document.getElementById('h2').value) || 0,
+          parseFloat(document.getElementById('h3').value) || 0
+        ];
+        
+        const f = [
+          parseFloat(document.getElementById('f1').value) || 0,
+          parseFloat(document.getElementById('f2').value) || 0,
+          parseFloat(document.getElementById('f3').value) || 0
+        ];
+        
+        const c = [
+          parseFloat(document.getElementById('c1').value) || 0,
+          parseFloat(document.getElementById('c2').value) || 0,
+          parseFloat(document.getElementById('c3').value) || 0
+        ];
+        
+        // Castle levels (new)
+        const castle = [
+          parseFloat(document.getElementById('castle1').value) || 0,
+          parseFloat(document.getElementById('castle2').value) || 0,
+          parseFloat(document.getElementById('castle3').value) || 0
+        ];
+        
+        // Calculate totals
+        const totalH = h.reduce((a, b) => a + b, 0);
+        const totalF = f.reduce((a, b) => a + b, 0);
+        const totalC = c.reduce((a, b) => a + b, 0);
+        const totalCastles = castle.reduce((a, b) => a + b, 0);
+        const totalBuildings = totalH + totalF + totalC + totalCastles;
+        
+        // Update total displays
+        document.getElementById('total-houses').textContent = totalH;
+        document.getElementById('total-forges').textContent = totalF;
+        document.getElementById('total-churches').textContent = totalC;
+        document.getElementById('total-castles').textContent = totalCastles;
+        document.getElementById('total-buildings').textContent = totalBuildings;
+        
+        // WOOD GENERATION - CORRECTED BASED ON OFFICIAL INFO
+        // Base: 0.038 wood/second
+        // Each unlock adds +6% of base (0.00228) FLAT BONUS
+        const unlocks = tiles - 1;
+        const woodPerSecond = 0.038 + (unlocks * 0.00228);
+        const woodHourly = woodPerSecond * 3600;
+        const woodDaily = woodHourly * 24;
+        
+        // Max Wood Storage - CORRECTED
+        const maxWoodStorage = 300 + 170 * unlocks;
+        document.getElementById('max-wood').textContent = Math.round(maxWoodStorage).toLocaleString();
+        
+        // Update wood/hour display
+        document.getElementById('wood-per-hour').textContent = woodHourly.toFixed(1);
+        
+        // Stone Production
+        const stoneHourly = h[0] * PROD.house[0] + h[1] * PROD.house[1] + h[2] * PROD.house[2];
+        const stoneDaily = stoneHourly * 24;
+        
+        // Iron Production with Multiplier
+        const ironBaseHourly = f[0] * PROD.forge[0] + f[1] * PROD.forge[1] + f[2] * PROD.forge[2];
+        
+        let ironMultiplier = 1;
+        for (let level = 0; level < 3; level++) {
+          for (let i = 0; i < c[level]; i++) {
+            ironMultiplier *= MULT[level];
+          }
+        }
+        const ironHourly = ironBaseHourly * ironMultiplier;
+        const ironDaily = ironHourly * 24;
+        
+        // Update iron multiplier display
+        document.getElementById('iron-multiplier').textContent = ironMultiplier.toFixed(2) + 'x';
+        
+        // cGOLD Production
+        const cgoldHourly = c[0] * PROD.church[0] + c[1] * PROD.church[1] + c[2] * PROD.church[2];
+        const cgoldDaily = cgoldHourly * 24;
+        
+        // Repair Costs - HOURLY
+        const repWoodHourly = totalH * REPAIR_HOURLY.house.w + 
+                            totalF * REPAIR_HOURLY.forge.w + 
+                            totalC * REPAIR_HOURLY.church.w + 
+                            totalCastles * REPAIR_HOURLY.castle.w;
+        
+        const repStoneHourly = totalH * REPAIR_HOURLY.house.s + 
+                             totalF * REPAIR_HOURLY.forge.s + 
+                             totalC * REPAIR_HOURLY.church.s + 
+                             totalCastles * REPAIR_HOURLY.castle.s;
+        
+        const repIronHourly = totalH * REPAIR_HOURLY.house.i + 
+                            totalF * REPAIR_HOURLY.forge.i + 
+                            totalC * REPAIR_HOURLY.church.i + 
+                            totalCastles * REPAIR_HOURLY.castle.i;
+        
+        const repGoldHourly = totalC * REPAIR_HOURLY.church.g + totalCastles * REPAIR_HOURLY.castle.g;
+        
+        // Repair Costs - DAILY (×24)
+        const repWoodDaily = repWoodHourly * 24;
+        const repStoneDaily = repStoneHourly * 24;
+        const repIronDaily = repIronHourly * 24;
+        const repGoldDaily = repGoldHourly * 24;
+        
+        // Net Hourly (production - repairs)
+        const netWoodHourly = woodHourly - repWoodHourly;
+        const netStoneHourly = stoneHourly - repStoneHourly;
+        const netIronHourly = ironHourly - repIronHourly;
+        const netCGoldHourly = cgoldHourly; // cGOLD has no repair cost
+        
+        // Net Daily (production - repairs)
+        const netWoodDaily = woodDaily - repWoodDaily;
+        const netStoneDaily = stoneDaily - repStoneDaily;
+        const netIronDaily = ironDaily - repIronDaily;
+        const netCGoldDaily = cgoldDaily; // cGOLD has no repair cost
+        
+        // Castle Activation Check - now based on number of castles
+        const castleActive = totalCastles > 0;
+        
+        // $GOLD Profit Calculation
+        let grossGoldFromConversion = 0;
+        let netGoldDaily = 0;
+        let netGoldHourly = 0;
+        let convertibleCGold = 0;
+        
+        if (castleActive) {
+          // Each castle can convert up to 2600 cGOLD per day to $GOLD
+          const maxConversionPerDay = totalCastles * 2600;
+          convertibleCGold = Math.min(cgoldDaily, maxConversionPerDay);
+          
+          // Conversion: 2600 cGOLD → 1820 $GOLD (70% conversion rate, 1→0.7)
+          grossGoldFromConversion = (convertibleCGold / 2600) * 1820;
+          
+          // Total gold repair costs (castles + churches)
+          const totalGoldRepair = repGoldDaily;
+          
+          // Net $GOLD (gross conversion minus all gold repairs)
+          netGoldDaily = Math.max(0, grossGoldFromConversion - totalGoldRepair);
+          netGoldHourly = netGoldDaily / 24;
+        }
+        
+        // Calculate USD equivalents
+        const usdHourly = goldPriceLoaded ? netGoldHourly * goldPriceUSD : 0;
+        const usdDaily = goldPriceLoaded ? netGoldDaily * goldPriceUSD : 0;
+        const grossUsdDaily = goldPriceLoaded ? grossGoldFromConversion * goldPriceUSD : 0;
+        
+        // Update USD displays
+        if (goldPriceLoaded) {
+          document.getElementById('gold-usd-equivalent').textContent = `≈ $${usdDaily.toFixed(2)} USD/day`;
+          document.getElementById('dailyUsdProfit').textContent = `$${usdDaily.toFixed(2)}`;
+        }
+        
+        // Update score displays
+        document.getElementById('score-wood').textContent = Math.round(netWoodDaily).toLocaleString();
+        document.getElementById('score-wood').className = `score-value ${netWoodDaily >= 0 ? 'positive' : 'negative'}`;
+        
+        document.getElementById('score-stone').textContent = Math.round(netStoneDaily).toLocaleString();
+        document.getElementById('score-stone').className = `score-value ${netStoneDaily >= 0 ? 'positive' : 'negative'}`;
+        
+        document.getElementById('score-iron').textContent = Math.round(netIronDaily).toLocaleString();
+        document.getElementById('score-iron').className = `score-value ${netIronDaily >= 0 ? 'positive' : 'negative'}`;
+        
+        document.getElementById('score-gold').textContent = Math.round(netGoldDaily).toLocaleString();
+        document.getElementById('score-gold').className = 'score-value gold';
+        
+        // Update castle status
+        const castleStatusEl = document.getElementById('castle-status');
+        castleStatusEl.textContent = castleActive ? "Active" : "Inactive";
+        castleStatusEl.className = `stat-value ${castleActive ? 'positive' : 'negative'}`;
+        
+        // Generate alerts
+        let msg = '';
+        if (totalH < totalF * 2) {
+          msg = '<div class="alert warning">⚠️ Not enough Houses! Need 2 Houses per Forge</div>';
+        } else if (totalCastles > 0 && totalC < 1) {
+          msg = '<div class="alert warning">⚠️ Need at least 1 Church for castle conversion</div>';
+        } else if (netWoodDaily < 0 || netStoneDaily < 0 || netIronDaily < 0) {
+          msg = '<div class="alert warning">⚠️ Resource deficit - check Notes tab for explanation</div>';
+        } else if (castleActive) {
+          msg = '<div class="alert success">✅ Town is sustainable! Castle converting cGOLD to $GOLD</div>';
+        } else {
+          msg = '<div class="alert success">✅ Town is sustainable!</div>';
+        }
+        document.getElementById('alert').innerHTML = msg;
+        
+        // Store current calculations for later use
+        currentCalculations = {
+          woodHourly, woodDaily, stoneHourly, stoneDaily, ironHourly, ironDaily,
+          cgoldHourly, cgoldDaily, repWoodHourly, repWoodDaily, repStoneHourly, repStoneDaily,
+          repIronHourly, repIronDaily, repGoldHourly, repGoldDaily,
+          netWoodHourly, netWoodDaily, netStoneHourly, netStoneDaily,
+          netIronHourly, netIronDaily, netCGoldHourly, netCGoldDaily,
+          grossGoldFromConversion: grossGoldFromConversion,
+          netGoldHourly, netGoldDaily,
+          ironMultiplier, castleActive, convertibleCGold,
+          usdHourly, usdDaily, grossUsdDaily
+        };
+        
+        // Update comparison tables
+        updateComparisonTables(currentCalculations);
+      }
+
+      function updateComparisonTables(calc) {
+        // Hourly Comparison Table
+        let hourlyTable = `
+          <thead>
+            <tr>
+              <th>Resource</th>
+              <th>📈 Production</th>
+              <th>🔧 Repairs</th>
+              <th>💰 Net</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="resource-cell">🌲 Wood</td>
+              <td class="positive">${calc.woodHourly.toFixed(1)}</td>
+              <td class="negative">${calc.repWoodHourly.toFixed(1)}</td>
+              <td class="${calc.netWoodHourly >= 0 ? 'positive' : 'negative'}">${calc.netWoodHourly.toFixed(1)}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">🏠 Stone</td>
+              <td class="positive">${calc.stoneHourly.toFixed(1)}</td>
+              <td class="negative">${calc.repStoneHourly.toFixed(1)}</td>
+              <td class="${calc.netStoneHourly >= 0 ? 'positive' : 'negative'}">${calc.netStoneHourly.toFixed(1)}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">🛠️ Iron (×${calc.ironMultiplier.toFixed(2)})</td>
+              <td class="positive">${calc.ironHourly.toFixed(2)}</td>
+              <td class="negative">${calc.repIronHourly.toFixed(2)}</td>
+              <td class="${calc.netIronHourly >= 0 ? 'positive' : 'negative'}">${calc.netIronHourly.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">⛪ cGOLD</td>
+              <td class="positive">${calc.cgoldHourly.toFixed(1)}</td>
+              <td>0</td>
+              <td class="positive">${calc.netCGoldHourly.toFixed(1)}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">💰 $GOLD</td>
+              <td class="gold">${calc.castleActive ? calc.grossGoldFromConversion/24 : '0.00'}</td>
+              <td class="negative">${calc.repGoldHourly.toFixed(4)}</td>
+              <td class="gold">${calc.castleActive ? calc.netGoldHourly.toFixed(4) : '0.00'}</td>
+            </tr>
+        `;
+        
+        // Add USD row if price is loaded
+        if (goldPriceLoaded && calc.castleActive) {
+          hourlyTable += `
+            <tr>
+              <td class="resource-cell">💵 USD Equivalent</td>
+              <td colspan="2"></td>
+              <td class="usd">$${calc.usdHourly.toFixed(2)}/hr</td>
+            </tr>
+          `;
+        }
+        
+        hourlyTable += `</tbody>`;
+        document.getElementById('hourly-comparison').innerHTML = hourlyTable;
+        
+        // Daily Comparison Table
+        let dailyTable = `
+          <thead>
+            <tr>
+              <th>Resource</th>
+              <th>📈 Production</th>
+              <th>🔧 Repairs</th>
+              <th>💰 Net</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="resource-cell">🌲 Wood</td>
+              <td class="positive">${Math.round(calc.woodDaily).toLocaleString()}</td>
+              <td class="negative">${Math.round(calc.repWoodDaily).toLocaleString()}</td>
+              <td class="${calc.netWoodDaily >= 0 ? 'positive' : 'negative'}">${Math.round(calc.netWoodDaily).toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">🏠 Stone</td>
+              <td class="positive">${Math.round(calc.stoneDaily).toLocaleString()}</td>
+              <td class="negative">${Math.round(calc.repStoneDaily).toLocaleString()}</td>
+              <td class="${calc.netStoneDaily >= 0 ? 'positive' : 'negative'}">${Math.round(calc.netStoneDaily).toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">🛠️ Iron (×${calc.ironMultiplier.toFixed(2)})</td>
+              <td class="positive">${Math.round(calc.ironDaily).toLocaleString()}</td>
+              <td class="negative">${Math.round(calc.repIronDaily).toLocaleString()}</td>
+              <td class="${calc.netIronDaily >= 0 ? 'positive' : 'negative'}">${Math.round(calc.netIronDaily).toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">⛪ cGOLD</td>
+              <td class="positive">${Math.round(calc.cgoldDaily).toLocaleString()}</td>
+              <td class="negative">0</td>
+              <td class="positive">${Math.round(calc.netCGoldDaily).toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td class="resource-cell">💰 $GOLD</td>
+              <td class="gold">${calc.castleActive ? Math.round(calc.grossGoldFromConversion).toLocaleString() : '0'}</td>
+              <td class="negative">${Math.round(calc.repGoldDaily).toLocaleString()}</td>
+              <td class="gold">${calc.castleActive ? Math.round(calc.netGoldDaily).toLocaleString() : '0'}</td>
+            </tr>
+        `;
+        
+        // Add USD row if price is loaded
+        if (goldPriceLoaded && calc.castleActive) {
+          dailyTable += `
+            <tr>
+              <td class="resource-cell">💵 USD Equivalent</td>
+              <td colspan="2"></td>
+              <td class="usd">$${calc.usdDaily.toFixed(2)}/day</td>
+            </tr>
+          `;
+        }
+        
+        dailyTable += `</tbody>`;
+        document.getElementById('daily-comparison').innerHTML = dailyTable;
+      }
+
+      // Initialize calculator
+      window.addEventListener('DOMContentLoaded', initialize);
+      
+      // Make showTab function global
+      window.showTab = showTab;
+      
+      // Make update function global for GOLD price updates
+      window.updateCalculator = update;
+      
+      // Call initialize if calculator is ready
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        initialize();
+      }
+    }
+  </script>
+</body>
+</html>
