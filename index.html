@@ -126,21 +126,21 @@
     }
     
     /* Modal Content */
-.modal-content {
-  background: linear-gradient(135deg, rgba(30, 30, 46, 0.95) 0%, rgba(26, 26, 38, 0.95) 100%);
-  border-radius: 20px;
-  padding: 20px;  /* CHANGED from 30px */
-  max-width: 420px;  /* CHANGED from 500px */
-  width: 100%;
-  text-align: center;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  animation: modalSlideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+    .modal-content {
+      background: linear-gradient(135deg, rgba(30, 30, 46, 0.95) 0%, rgba(26, 26, 38, 0.95) 100%);
+      border-radius: 20px;
+      padding: 20px;  /* CHANGED from 30px */
+      max-width: 420px;  /* CHANGED from 500px */
+      width: 100%;
+      text-align: center;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: modalSlideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
     
     @keyframes modalSlideIn {
       from {
@@ -153,47 +153,47 @@
       }
     }
     
-.modal-icon {
-  font-size: 2.5em;  /* CHANGED from 3.5em */
-  margin-bottom: 10px;  /* CHANGED from 15px */
-  animation: bounce 2s infinite;
-  text-shadow: 0 0 20px rgba(29, 161, 242, 0.5);
-}
+    .modal-icon {
+      font-size: 2.5em;  /* CHANGED from 3.5em */
+      margin-bottom: 10px;  /* CHANGED from 15px */
+      animation: bounce 2s infinite;
+      text-shadow: 0 0 20px rgba(29, 161, 242, 0.5);
+    }
     
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }
     
-.modal-title {
-  color: #ffffff;
-  font-size: 1.5em;  /* CHANGED from 1.8em */
-  font-weight: 800;
-  margin-bottom: 5px;  /* CHANGED from 8px */
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-}
+    .modal-title {
+      color: #ffffff;
+      font-size: 1.5em;  /* CHANGED from 1.8em */
+      font-weight: 800;
+      margin-bottom: 5px;  /* CHANGED from 8px */
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
     
-.modal-subtitle {
-  color: #b0b0b0;
-  font-size: 0.95em;  /* CHANGED from 1em */
-  margin-bottom: 15px;  /* CHANGED from 20px */
-  line-height: 1.5;
-}
+    .modal-subtitle {
+      color: #b0b0b0;
+      font-size: 0.95em;  /* CHANGED from 1em */
+      margin-bottom: 15px;  /* CHANGED from 20px */
+      line-height: 1.5;
+    }
     
     /* Tweet Preview */
-.tweet-preview {
-  background: rgba(240, 248, 255, 0.1);
-  border: 2px solid rgba(29, 161, 242, 0.5);
-  border-radius: 12px;
-  padding: 10px;  /* CHANGED from 15px */
-  margin: 10px 0;  /* CHANGED from 15px 0 */
-  text-align: left;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  position: relative;
-  backdrop-filter: blur(5px);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+    .tweet-preview {
+      background: rgba(240, 248, 255, 0.1);
+      border: 2px solid rgba(29, 161, 242, 0.5);
+      border-radius: 12px;
+      padding: 10px;  /* CHANGED from 15px */
+      margin: 10px 0;  /* CHANGED from 15px 0 */
+      text-align: left;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
     
     .tweet-preview:hover {
       transform: translateY(-2px);
@@ -208,19 +208,19 @@
       margin-bottom: 10px;
     }
     
-.tweet-avatar {
-  width: 32px;  /* CHANGED from 40px */
-  height: 32px;  /* CHANGED from 40px */
-  border-radius: 50%;
-  background: linear-gradient(135deg, #1da1f2, #0d8ddb);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1em;  /* CHANGED from 1.2em */
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(29, 161, 242, 0.5);
-}
+    .tweet-avatar {
+      width: 32px;  /* CHANGED from 40px */
+      height: 32px;  /* CHANGED from 40px */
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1da1f2, #0d8ddb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1em;  /* CHANGED from 1.2em */
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(29, 161, 242, 0.5);
+    }
     
     .tweet-user {
       flex: 1;
@@ -262,28 +262,28 @@
     }
     
     /* Tasks List - MEDIUM SIZE */
-.tasks-list {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 12px;  /* CHANGED from 15px */
-  margin: 12px 0;  /* CHANGED from 15px 0 */
-  text-align: left;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-}
+    .tasks-list {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px;  /* CHANGED from 15px */
+      margin: 12px 0;  /* CHANGED from 15px 0 */
+      text-align: left;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+    }
     
-.task-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 10px;  /* CHANGED from 10px 12px */
-  margin-bottom: 6px;  /* CHANGED from 8px */
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;  /* CHANGED from 10px 12px */
+      margin-bottom: 6px;  /* CHANGED from 8px */
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
     
     .task-item:hover {
       background: rgba(255, 255, 255, 0.1);
@@ -346,6 +346,39 @@
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
+    }
+    
+    /* Play Now Button */
+    .play-now-container {
+      text-align: center;
+      margin: 20px 0 25px 0;
+    }
+    
+    .play-now-button {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+      border: none;
+      padding: 16px 35px;
+      font-size: 1.1em;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 6px 20px rgba(243, 156, 18, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .play-now-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(243, 156, 18, 0.4);
+      background: linear-gradient(135deg, #f1c40f 0%, #d35400 100%);
+    }
+    
+    .play-now-button:active {
+      transform: translateY(-1px);
     }
     
     .twitter-button {
@@ -427,20 +460,20 @@
     }
     
     /* Reward Badge */
-.reward-badge {
-  background: linear-gradient(135deg, rgba(243, 156, 18, 0.8) 0%, rgba(230, 126, 34, 0.8) 100%);
-  color: white;
-  padding: 6px 12px;  /* CHANGED from 8px 15px */
-  border-radius: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;  /* CHANGED from 15px */
-  font-weight: 700;
-  font-size: 0.85em;  /* CHANGED from 0.9em */
-  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
-  backdrop-filter: blur(5px);
-}
+    .reward-badge {
+      background: linear-gradient(135deg, rgba(243, 156, 18, 0.8) 0%, rgba(230, 126, 34, 0.8) 100%);
+      color: white;
+      padding: 6px 12px;  /* CHANGED from 8px 15px */
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;  /* CHANGED from 15px */
+      font-weight: 700;
+      font-size: 0.85em;  /* CHANGED from 0.9em */
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+      backdrop-filter: blur(5px);
+    }
     
     /* Overlay for readability */
     .content-overlay {
@@ -878,24 +911,35 @@
     }
     
     /* Responsive */
-@media (max-width: 768px) {
-  .modal-content {
-    padding: 20px;
-    margin: 10px;
-  }
-  
-  .modal-title {
-    font-size: 1.6em;
-  }
-  
-  .task-label {
-    font-size: 0.85em;
-  }
-  
-  .verify-button {
-    padding: 12px 20px;
-    font-size: 0.95em;
-  }
+    @media (max-width: 768px) {
+      .modal-content {
+        padding: 15px;
+        margin: 10px;
+      }
+      
+      .play-now-button {
+        padding: 14px 25px;
+        font-size: 1em;
+        width: 90%;
+        max-width: 300px;
+      }
+      
+      .play-now-container {
+        margin: 15px 0 20px 0;
+      }
+      
+      .modal-title {
+        font-size: 1.3em;
+      }
+      
+      .task-label {
+        font-size: 0.85em;
+      }
+      
+      .verify-button {
+        padding: 12px 20px;
+        font-size: 0.95em;
+      }
       
       .footer-section {
         padding: 20px 15px;
@@ -952,6 +996,11 @@
       
       .card {
         padding: 15px;
+      }
+      
+      .play-now-button {
+        padding: 12px 20px;
+        font-size: 0.95em;
       }
     }
   </style>
@@ -1059,6 +1108,13 @@
   <div class="container blurred" id="mainContent">
     <h1>🏰 Townies Calculator</h1>
     <p class="subtitle">Accurate calculations based on official game mechanics</p>
+    
+    <!-- Play Now Button -->
+    <div class="play-now-container">
+      <a href="https://app.townies.games?ref=6beba580bc" target="_blank" class="play-now-button">
+        🎮 Play Townies Now (Using My Referral)
+      </a>
+    </div>
     
     <!-- Current GOLD Price Display -->
     <div class="gold-price" id="liveGoldPrice">
